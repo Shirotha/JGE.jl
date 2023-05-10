@@ -1,0 +1,12 @@
+# Visual Studio Code
+/.vscode
+
+# Julia
+/Manifest.toml
+
+# Jupyter
+*.ipynb
+.ipynb_checkpoints
+
+# example output
+/examples/*/
