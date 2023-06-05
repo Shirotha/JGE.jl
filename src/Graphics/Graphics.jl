@@ -4,8 +4,12 @@ module Graphics
 
     include("../SIMD-Patch.jl")
     include("../BiDataStructures.jl")
+    include("../UnsafeCollections.jl")
+    include("../UnsafeStructs.jl")
 
-    include("GLAbstraction-UniformBuffer-Patch.jl")
+    include("GLAbstraction-Patch.jl")
+    
+    include("StructLayout.jl")
 
     #=
         uniform blocks
@@ -24,20 +28,32 @@ module Graphics
             store all together in mesh
             => use VertexArray
 
+        # TODO: create UnsafeStruct type from std140 or from offset queries
         # TODO: implement Material type
         #       - uniform values?
         #       - uniform block references
+        #       ? texture references ?
         #       - subroutine bindings
+        #       - function to bind to material (or parts of it, when multiple materials use same Program?)
         # TODO: implement shader file format (ref: unity CG code)
         #       - opengl configuration (e.g. blending, stencil)
         #       - uniforms/uniform block types (julia + glsl)
         #       - interface blocks/varying
         #       - glsl shader code
         #       - glsl helper functions to include (e.g. MVP, lighting)
-        # TODO: implement draw functions
+        # TODO: implement draw pipeline (? what order is the best, bind most expensive things first, also do multiple steps at once and repeat others for out of order calls ?)
+        #       - write all data at frame start (e.g. global, camera)
+        #       - loop over all draw commands
+        #       - bind to Program
+        #       ? bind to Textures ?
+        #       - bind to Material
+        #       - write local uniforms
+        #       - bind VertexArray
+        #       - AbstractGL.draw call
         # TODO support compute shaders
+        #       ? seperate Program that only includes compute relevant data ?
         #       - implement UniformBuffer equivalent without multiple elements (ShaderStorageBuffer)
-        #       ? only update parts to prevent re-uploading the whole struct ?
+        #       ? only update parts to prevent re-uploading the whole struct, maybe implement use observervable properties ?
         #       - shader file compute section (including group size)
         #       - link to SSBO from within shader file (including access qualifiers)
         #       - attach SSBO to shaders

@@ -20,12 +20,20 @@ module SIMDPatch
         't' => 3,
     )
 
-    map_coord_name(order::Symbol) = Val{getindex.((COORD_NAMES,), Tuple(String(order)))}()
-    @generated map_coord_name(::Val{order}) where order = map_coord_name(order)
+    name2index(order::Symbol) = getindex.((COORD_NAMES,), Tuple(String(order)))
 
-    swiwwel(v::Vec, order) = shufflevector(v, map_coord_name(order))
+    name2index_val(order::Symbol) = Val{name2index(order)}()
+    @generated name2index_val(::Val{order}) where order = name2index_val(order)
 
+    swiwwel(v::Vec, order) = shufflevector(v, name2index_val(order))
+
+    import Base: getproperty
     getproperty(v::Vec, order::Symbol) = order === :data ? getfield(v, :data) : swiwwel(v, Val{order}())
+
+    import Base: getindex
+    getindex(v::Vac, I::Tuple) = shufflevector(v, Val{I}())
+    getindex(v::Vac, I::Val) = shufflevector(v, I)
+    getindex(v::Vec, I::Vec) = shufflevector(v, Val{I.data}())
 
     # Vec mixed types
     promote_rule(::Type{Vec{N, T}}, ::Type{Vec{N, U}}) where {N, T, U} = Vec{N, promote_type(T, U)}
@@ -56,7 +64,7 @@ module SIMDPatch
 
     # exports
     for name in names(SIMD)
-        @eval export name
+        @eval export $name
     end
 
     export simd
