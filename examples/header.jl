@@ -1,2 +1,2 @@
-include("../src/LGE.jl")
-using LGE
+include("../src/JGE.jl")
+using .JGE

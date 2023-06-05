@@ -1,5 +1,5 @@
-include("../src/LGE.jl")
-using LGE
+include("../src/JGE.jl")
+using .JGE
 
-@testset verbose=true "LGE" begin
+@testset verbose=true "JGE" begin
 end
